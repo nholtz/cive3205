@@ -8,3 +8,6 @@ set PYTHONPATH=%casd%\lib;%PYTHONPATH%
 
 REM - perhaps modify this line for the location of your Python
 C:\Anaconda3\python.exe -m jupyter notebook
+
+REM - or:
+REM C:\Anaconda3\python.exe -m jupyter lab
