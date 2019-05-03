@@ -7,7 +7,7 @@ show = Designer.show
 
 class DesignInteract(object):   # haven't yet thought of a good name
     
-    def __init__(self):
+    def __init__(self,callable=None):
         self.section = None
         self.data = {}
         self.widgets = {}
@@ -18,6 +18,8 @@ class DesignInteract(object):   # haven't yet thought of a good name
         self.dsg_widget = None
         self.compute_button = None
         self.defaults = {}
+        if callable:
+            self._install_callable(callable)
         
     def setDefaults(self,**kwargs):
         self.defaults.update(kwargs)
@@ -48,17 +50,19 @@ class DesignInteract(object):   # haven't yet thought of a good name
         self.callable_args = args.args
         self.callable = callable
         
-    def interact(self,callable):
+    def interact(self,callable=None):
         self._build()
-        self._install_callable(callable)
+        if callable:
+            self._install_callable(callable)
         self._updateWidgetValues()
         display(self.main_widget)
         display(self.output_widget)
         
-    def _updateWidgetValues(self,properties=set()):
-        for k,w in self.widgets.items():
-            if properties and k not in properties:
-                continue
+    def _updateWidgetValues(self,keys=[]):
+        if not keys:
+            keys = self.widgets.keys()
+        for k in keys:
+            w = self.widgets[k]
             if k in self.data:
                 w.value = self.data[k]
             elif k in self.defaults:
@@ -84,13 +88,13 @@ class DesignInteract(object):   # haven't yet thought of a good name
             section = Designer.SST.section(Dsg)
             for p in self.properties:
                 self.data[p] = section[p]
-            self._updateWidgetValues(self.properties)
             self.data['Dsg'] = Dsg
+            self._updateWidgetValues(self.properties)
             
     def defWidgets(self,text,properties=False):
         wlist = []
         if properties:
-            dwidg = widgets.Text(value='W250x80',
+            dwidg = widgets.Text(value=properties,
                                placeholder='Shape Designation',
                                description='Dsg:',
                               tooltip='A shape designation to lookup for values.')
